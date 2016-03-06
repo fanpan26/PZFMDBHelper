@@ -19,22 +19,17 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    NSDictionary *dictionary = [[PZClassAnalysis sharedAnalysis] pz_getClassPropertyWithClass:[UITableView class]];
-    /*
-     "PROPERTY_NAME" =     (
-     name,
-     age,
-     number,
-     address
-     );
-     "PROPERTY_TYPE" =     (
-     TEXT,
-     REAL,
-     REAL,
-     TEXT
-     );
-     */
-    NSLog(@"%@",dictionary);
+    PZDBModel *model = [[PZDBModel alloc] init];
+    model.name = @"panzi";
+    model.number = 12;
+    [[PZClassAnalysis sharedAnalysis] pz_addDataWithModel:model];
+    
+    PZDBModel *model1 = [[PZDBModel alloc] init];
+    model1.name = @"panzi";
+    model1.number = 13;
+    [[PZClassAnalysis sharedAnalysis] pz_addDataWithModel:model1];
+
+
 }
 
 - (void)didReceiveMemoryWarning {

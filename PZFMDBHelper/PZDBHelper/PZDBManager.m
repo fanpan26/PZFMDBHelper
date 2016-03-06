@@ -79,5 +79,4 @@ NSString *const defaultDBName = @"PZLOCAL_DB.SQLLITE";
     return  [PZDBManager manager];
 }
 
-
 @end

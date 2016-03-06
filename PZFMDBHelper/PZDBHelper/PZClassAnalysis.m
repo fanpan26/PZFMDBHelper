@@ -98,7 +98,7 @@ static NSString *const propertyTypeKey = @"PROPERTY_TYPE";
     return [self pz_getClassPropertyWithClass:[model class]];
 }
 
--(BOOL)addDataWithModel:(id)model
+-(BOOL)pz_addDataWithModel:(id)model
 {
     NSString *insertSQL = [self pz_getInsertSQL:model];
     __block BOOL result = NO;
@@ -108,12 +108,21 @@ static NSString *const propertyTypeKey = @"PROPERTY_TYPE";
     NSArray *columnNames = [dict objectForKey:propertyNameKey];
     NSMutableArray *valueArray = [NSMutableArray array];
     [columnNames enumerateObjectsUsingBlock:^(NSString *_cname, NSUInteger idx, BOOL * _Nonnull stop) {
-        [valueArray addObject:[model valueForKey:_cname]];
+        id val = [model valueForKey:_cname];
+        if (!val) {
+            val  = @"";
+        }
+        [valueArray addObject:val];
     }];
     
     [GlobalDBManager.dbQueue inDatabase:^(FMDatabase *db) {
        result = [db executeUpdate:insertSQL withArgumentsInArray:valueArray];
     }];
+    if(result){
+        NSLog(@"插入成功");
+    }else{
+        NSLog(@"插入失败");
+    }
     return  result;
 }
 #pragma mark 私有方法
@@ -192,5 +201,74 @@ static NSString *const propertyTypeKey = @"PROPERTY_TYPE";
     return _updateSQL;
 
 }
+
+/*获取键值对  unionid  text */
+-(NSString *)getTypeAndColumnStringWithClass:(Class)c orName:(NSString *)name
+{
+    NSMutableString *typeColumnString = [NSMutableString string];
+    if (name) {
+        if (!c) {
+            c = NSClassFromString(name);
+        }
+    }
+    NSDictionary *nameAndTypes = [self pz_getClassPropertyWithClass:c];
+    
+    NSArray *names = [nameAndTypes objectForKey:propertyNameKey];
+    NSArray *types = [nameAndTypes objectForKey:propertyTypeKey];
+    [names enumerateObjectsUsingBlock:^(NSString *name, NSUInteger idx, BOOL * _Nonnull stop) {
+        NSString *type = [types objectAtIndex:idx];
+        
+        [typeColumnString appendFormat:@"%@ %@",name,type];
+        if (idx < names.count - 1) {
+            [typeColumnString appendString:@","];
+        }
+    }];
+    
+    NSLog(@"typeColumnString 为：%@",typeColumnString);
+    
+    return typeColumnString;
+}
+
+
+-(BOOL)createTableWithClasses:(NSArray *)classes
+{
+    
+    NSMutableArray *nameArrary = [NSMutableArray array];
+    [classes enumerateObjectsUsingBlock:^(Class obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        [nameArrary addObject:NSStringFromClass(obj)];
+    }];
+    return  [self createTableWithNames:[nameArrary copy]];
+}
+
+-(BOOL)createTableWithNames:(NSArray *)names recreate:(BOOL)recreate
+{
+    return [self createTableWithNames:names];
+}
+
+-(BOOL)createTableWithNames:(NSArray *)names
+{
+    if (names.count == 0 ||names == nil) {
+        return  NO;
+    }
+    __block BOOL result = YES;
+    [GlobalDBManager.dbQueue inTransaction:^(FMDatabase *db, BOOL *rollback) {
+        
+        [names enumerateObjectsUsingBlock:^(NSString *n, NSUInteger idx, BOOL * _Nonnull stop) {
+            
+            NSString *columnAndType = [self getTypeAndColumnStringWithClass:nil orName:n];
+            NSString *createTableSQL = [NSString stringWithFormat: @"CREATE TABLE IF NOT EXISTS %@ (%@);",n,columnAndType];
+            NSLog(@"创建Table的语句：%@",createTableSQL);
+            if (![db executeUpdate:createTableSQL]) {
+                result  = NO;
+                *rollback = YES;
+                return ;
+            }
+
+        }];
+    }];
+    return result;
+}
+
+
 
 @end
