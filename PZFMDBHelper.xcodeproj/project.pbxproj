@@ -21,7 +21,7 @@
 		2CF633341C8B47EA009CDA65 /* FMDatabaseQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 2CF6332B1C8B47EA009CDA65 /* FMDatabaseQueue.m */; };
 		2CF633351C8B47EA009CDA65 /* FMResultSet.m in Sources */ = {isa = PBXBuildFile; fileRef = 2CF6332E1C8B47EA009CDA65 /* FMResultSet.m */; };
 		2CF633371C8B47FD009CDA65 /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 2CF633361C8B47FD009CDA65 /* libsqlite3.tbd */; };
-		2CF6333A1C8B4863009CDA65 /* PZClassAnalysis.m in Sources */ = {isa = PBXBuildFile; fileRef = 2CF633391C8B4863009CDA65 /* PZClassAnalysis.m */; };
+		2CF6333A1C8B4863009CDA65 /* PZFMDBUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 2CF633391C8B4863009CDA65 /* PZFMDBUtil.m */; };
 		2CF6333D1C8B4B84009CDA65 /* PZDBModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 2CF6333C1C8B4B84009CDA65 /* PZDBModel.m */; };
 		2CF633411C8B4E2F009CDA65 /* PZClassCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 2CF633401C8B4E2F009CDA65 /* PZClassCache.m */; };
 		2CF633441C8B57FB009CDA65 /* PZDBManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2CF633431C8B57FB009CDA65 /* PZDBManager.m */; };
@@ -52,8 +52,8 @@
 		2CF6332D1C8B47EA009CDA65 /* FMResultSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FMResultSet.h; sourceTree = "<group>"; };
 		2CF6332E1C8B47EA009CDA65 /* FMResultSet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FMResultSet.m; sourceTree = "<group>"; };
 		2CF633361C8B47FD009CDA65 /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = usr/lib/libsqlite3.tbd; sourceTree = SDKROOT; };
-		2CF633381C8B4863009CDA65 /* PZClassAnalysis.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PZClassAnalysis.h; sourceTree = "<group>"; };
-		2CF633391C8B4863009CDA65 /* PZClassAnalysis.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PZClassAnalysis.m; sourceTree = "<group>"; };
+		2CF633381C8B4863009CDA65 /* PZFMDBUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PZFMDBUtil.h; sourceTree = "<group>"; };
+		2CF633391C8B4863009CDA65 /* PZFMDBUtil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PZFMDBUtil.m; sourceTree = "<group>"; };
 		2CF6333B1C8B4B84009CDA65 /* PZDBModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PZDBModel.h; sourceTree = "<group>"; };
 		2CF6333C1C8B4B84009CDA65 /* PZDBModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PZDBModel.m; sourceTree = "<group>"; };
 		2CF6333E1C8B4C03009CDA65 /* PZDBHelper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PZDBHelper.h; sourceTree = "<group>"; };
@@ -125,8 +125,8 @@
 			children = (
 				2CF633421C8B57FB009CDA65 /* PZDBManager.h */,
 				2CF633431C8B57FB009CDA65 /* PZDBManager.m */,
-				2CF633381C8B4863009CDA65 /* PZClassAnalysis.h */,
-				2CF633391C8B4863009CDA65 /* PZClassAnalysis.m */,
+				2CF633381C8B4863009CDA65 /* PZFMDBUtil.h */,
+				2CF633391C8B4863009CDA65 /* PZFMDBUtil.m */,
 				2CF6333E1C8B4C03009CDA65 /* PZDBHelper.h */,
 				2CF6333F1C8B4E2F009CDA65 /* PZClassCache.h */,
 				2CF633401C8B4E2F009CDA65 /* PZClassCache.m */,
@@ -249,7 +249,7 @@
 				2CF633301C8B47EA009CDA65 /* README.markdown in Sources */,
 				2CF633311C8B47EA009CDA65 /* FMDatabase.m in Sources */,
 				2CF633331C8B47EA009CDA65 /* FMDatabasePool.m in Sources */,
-				2CF6333A1C8B4863009CDA65 /* PZClassAnalysis.m in Sources */,
+				2CF6333A1C8B4863009CDA65 /* PZFMDBUtil.m in Sources */,
 				2CF633351C8B47EA009CDA65 /* FMResultSet.m in Sources */,
 				2CF633081C8B4760009CDA65 /* main.m in Sources */,
 				2CF6333D1C8B4B84009CDA65 /* PZDBModel.m in Sources */,
@@ -401,6 +401,7 @@
 				2CF6331C1C8B4760009CDA65 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

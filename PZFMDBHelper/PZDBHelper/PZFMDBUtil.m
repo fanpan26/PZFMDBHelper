@@ -6,7 +6,7 @@
 //  Copyright © 2016年 fyp. All rights reserved.
 //
 
-#import "PZClassAnalysis.h"
+#import "PZFMDBUtil.h"
 #import <objc/runtime.h>
 #import "PZDBManager.h"
 
@@ -24,13 +24,13 @@
 static NSString *const propertyNameKey = @"PROPERTY_NAME";
 static NSString *const propertyTypeKey = @"PROPERTY_TYPE";
 
-@interface PZClassAnalysis(){
+@interface PZFMDBUtil(){
     NSCache *_cache;
 }
 
 @end
 
-@implementation PZClassAnalysis
+@implementation PZFMDBUtil
 
 -(instancetype)init
 {
@@ -42,13 +42,13 @@ static NSString *const propertyTypeKey = @"PROPERTY_TYPE";
 }
 
 /*单例*/
-+ (instancetype)sharedAnalysis
++ (instancetype)sharedUtil
 {
-    static PZClassAnalysis *_instance;
+    static PZFMDBUtil *_instance;
     static dispatch_once_t onceToken;
     
     dispatch_once(&onceToken, ^{
-        _instance = [[PZClassAnalysis alloc] init];
+        _instance = [[PZFMDBUtil alloc] init];
     });
     return _instance;
 }
@@ -268,6 +268,66 @@ static NSString *const propertyTypeKey = @"PROPERTY_TYPE";
     }];
     return result;
 }
+
+//更新Model
+- (BOOL)pz_updateDataWithModel:(id)model andCondition:(NSString *)condition{
+    NSString *updateSQL = [self pz_getUpdateSQL:model];
+    
+    NSMutableArray *arguments = [NSMutableArray array];
+    
+    NSArray *columns = [[self pz_getClassPropertyWithModel:model] objectForKey:propertyNameKey];
+    [columns enumerateObjectsUsingBlock:^(NSString *_name, NSUInteger idx, BOOL * _Nonnull stop) {
+        NSString *val = [model valueForKey:_name];
+        if (val == nil) {
+            val  = @"";
+        }
+        [arguments addObject:val];
+    }];
+    
+    __block BOOL result = NO;
+    [GlobalDBManager.dbQueue inDatabase:^(FMDatabase *db) {
+        result = [db executeUpdate:updateSQL withArgumentsInArray:arguments];
+    }];
+    return  result;
+}
+
+
+- (BOOL)pz_updateDataWithModel:(id)model andPrimaryKey:(NSString *)primaryKey{
+    id val = [model objectForKey:primaryKey];
+    if (val == nil) {
+        return NO;
+    }
+    NSString *condition = [NSString stringWithFormat:@"%@=%@",primaryKey,val];
+    return [self pz_updateDataWithModel:model andCondition:condition];
+}
+//删除model
+- (BOOL)pz_deleteDataWithModel:(id)model andCondition:(NSString *)condition{
+    
+    NSString *tableName = [self pz_getTableNameWithModel:model];
+    NSString *deleteSQL = [NSString stringWithFormat:@"DELETE FROM %@ WHERE %@",tableName,condition];
+    __block BOOL result = NO;
+    [GlobalDBManager.dbQueue inDatabase:^(FMDatabase *db) {
+        result = [db executeUpdate:deleteSQL];
+    }];
+    return  result;
+}
+
+- (BOOL)pz_deleteDataWithModel:(id)model andPrimaryKey:(NSString *)primaryKey{
+    id val = [model objectForKey:primaryKey];
+    if (val == nil) {
+        return NO;
+    }
+    NSString *condition = [NSString stringWithFormat:@"%@=%@",primaryKey,val];
+    return [self pz_deleteDataWithModel:model andCondition:condition];
+}
+//查询
+-(NSArray *)pz_queryDataWithClass:(Class)c andCondition:(NSString *)condition{return  nil;}
+
+-(id)pz_queryDataWithClass:(Class)c
+             andPrimaryKey:(NSString *)primaryKey
+           andPrimaryValue:(NSString *)primaryValue{return  nil;}
+
+-(NSArray *)pz_queryAllWithClass:(Class)c{return  nil;}
 
 
 

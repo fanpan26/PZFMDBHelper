@@ -22,12 +22,12 @@
     PZDBModel *model = [[PZDBModel alloc] init];
     model.name = @"panzi";
     model.number = 12;
-    [[PZClassAnalysis sharedAnalysis] pz_addDataWithModel:model];
+    [[PZFMDBUtil sharedUtil] pz_addDataWithModel:model];
     
     PZDBModel *model1 = [[PZDBModel alloc] init];
     model1.name = @"panzi";
     model1.number = 13;
-    [[PZClassAnalysis sharedAnalysis] pz_addDataWithModel:model1];
+    [[PZFMDBUtil sharedUtil] pz_addDataWithModel:model1];
 
 
 }

@@ -18,7 +18,7 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     
-    [[PZClassAnalysis sharedAnalysis] createTableWithNames:[NSArray arrayWithObject:@"PZDBModel"]];
+    [[PZFMDBUtil sharedUtil] createTableWithNames:[NSArray arrayWithObject:@"PZDBModel"]];
     // Override point for customization after application launch.
     return YES;
 }
