@@ -128,10 +128,12 @@ static NSString *const propertyTypeKey = @"PROPERTY_TYPE";
 #pragma mark 私有方法
 -(NSString *)pz_getTableNameWithModel:(id)model
 {
-    NSString *tableName = NSStringFromClass([model class]);
-//     NSString *tableNameCreateCacheKey = [NSString stringWithFormat:@"PZ_CACHE_CREATE_TABLE_%@",tableName];
-    
-    return tableName;
+    return [self pz_getTableNameWithClass:[model class]];
+}
+
+-(NSString *)pz_getTableNameWithClass:(Class)c
+{
+    return NSStringFromClass(c);
 }
 
 //获取插入的SQL语句，用NSCache缓存
@@ -326,8 +328,39 @@ static NSString *const propertyTypeKey = @"PROPERTY_TYPE";
 -(id)pz_queryDataWithClass:(Class)c
              andPrimaryKey:(NSString *)primaryKey
            andPrimaryValue:(NSString *)primaryValue{return  nil;}
-
--(NSArray *)pz_queryAllWithClass:(Class)c{return  nil;}
+//查询
+-(NSArray *)pz_queryAllWithClass:(Class)c{
+    NSString *tableName = [self pz_getTableNameWithClass:c];
+    NSString *querySQL = [NSString stringWithFormat: @"SELECT * FROM %@ ",tableName];
+    NSDictionary *dict = [self pz_getClassPropertyWithClass:c];
+    NSArray *columns = [dict objectForKey:propertyNameKey];
+    NSArray *types = [dict objectForKey:propertyTypeKey];
+    
+    NSMutableArray *results = [NSMutableArray array];
+    [GlobalDBManager.dbQueue inDatabase:^(FMDatabase *db) {
+        FMResultSet *result = [db executeQuery:querySQL];
+        while ([result next]) {
+            id model = [[c alloc] init];
+            [columns enumerateObjectsUsingBlock:^(NSString *_name, NSUInteger idx, BOOL * _Nonnull stop) {
+                NSString *t = [types objectAtIndex:idx];
+                if ([t isEqualToString:SQLTEXT]) {
+                    [model setValue:[result stringForColumn:_name] forKey:_name];
+                }else
+                if ([t isEqualToString:SQLREAL]) {
+                    [model setValue:@([result doubleForColumn:_name]) forKey:_name];
+                }else
+                if ([t isEqualToString:SQLINTEGER]) {
+                    [model setValue:@([result intForColumn:_name]) forKey:_name];
+                }else
+                if ([t isEqualToString:SQLNULL]) {
+                    //[model setValue:@"" forKey:_name];
+                }
+            }];
+            [results addObject:model];
+        }
+    }];
+    return [results copy];
+}
 
 
 
